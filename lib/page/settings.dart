@@ -1,4 +1,5 @@
 import 'package:carhelper/container.dart';
+import 'package:carhelper/widget/center_settings.dart';
 import 'package:flutter/material.dart';
 
 class Settings extends StatefulWidget {
@@ -21,7 +22,7 @@ class _SettingsState extends State<Settings> {
         centerTitle: true,
         backgroundColor: Colors.white70,
       ),
-      body: Text('Settings'),
+      body: BodySettings(),
     );
   }
 }
