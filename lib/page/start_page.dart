@@ -1,5 +1,5 @@
 import 'package:carhelper/container.dart';
-import 'package:carhelper/widget/Drawer.dart';
+import 'package:carhelper/widget/drawer_menu.dart';
 import 'package:carhelper/widget/center_main.dart';
 import 'package:flutter/material.dart';
 
@@ -18,14 +18,15 @@ class _MainPageState extends State<MainPage> {
       home: Scaffold(
         appBar: AppBar(
           title: Text(
-            kTitleAppBar,
+            kTitleAppBarMain,
             style: TextStyle(color: Colors.black),
           ),
+          iconTheme:  IconThemeData(color: Colors.black),
           centerTitle: true,
           backgroundColor: Colors.white70,
         ),
-        drawer: drawerMenu(),
-        body: bodyMain(),
+        drawer: DrawerMenu(),
+        body: BodyMain(),
       ),
     );
   }
