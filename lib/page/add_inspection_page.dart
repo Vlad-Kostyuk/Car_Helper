@@ -22,7 +22,11 @@ class _AddInspectionState extends State<AddInspection> {
         centerTitle: true,
         backgroundColor: Colors.white70,
       ),
-      body: BodyAddInspection(),
+      body: ListView(
+        children: <Widget>[
+          BodyAddInspection(),
+        ],
+      ),
     );
   }
 }

@@ -1,3 +1,6 @@
+import 'package:carhelper/db/database.dart';
+import 'package:carhelper/model/Inspection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class BodyMain extends StatefulWidget {
@@ -7,7 +10,24 @@ class BodyMain extends StatefulWidget {
   _BodyMainState createState() => _BodyMainState();
 }
 
+
 class _BodyMainState extends State<BodyMain> {
+  Future<List<Inspection>> futureInspectionList;
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    updateInspectionList();
+  }
+
+  updateInspectionList() {
+    setState(() {
+      futureInspectionList = DBProvider.db.getInspection();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -16,14 +36,12 @@ class _BodyMainState extends State<BodyMain> {
 
           Expanded(
             child: Center(
-              child: Expanded(
                 child: Container(
                   child: Icon(
                     Icons.directions_car,
                     size: 150,
                   ),
                 ),
-              ),
             ),
           ),
 
@@ -40,9 +58,76 @@ class _BodyMainState extends State<BodyMain> {
             ),
           ),
 
+          Expanded(
+            child: FutureBuilder(
+              future: futureInspectionList,
+              builder: (context, snapshot) {
+                if(snapshot.hasData) {
+                  return list(snapshot.data);
+                }
+                if(snapshot.data == null || snapshot.data.length == 0) {
+                  return Text('No Data Found');
+                }
+                return CircularProgressIndicator();
+              },
+            ),
+          ),
+
+
         ],
       ),
     );
   }
+
+  Widget list(List<Inspection> inspectionList) {
+    listcheck(inspectionList);
+      return  ListView.builder(
+        padding: EdgeInsets.all(20),
+        itemCount: inspectionList.length,
+        itemBuilder: (context, index) {
+          return Container(
+            margin: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+              boxShadow:[ BoxShadow(
+                color: Colors.blueGrey.withOpacity(0.5)
+              ),
+             ],
+            ),
+            child: ListTile(
+              onLongPress: () {
+                setState(() {
+                  DBProvider.db.deleteInspection(index);
+                  updateInspectionList();
+                });
+              },
+              title: Text(inspectionList[index].nameInspection),
+              subtitle: Padding(
+                padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(inspectionList[index].descripshon),
+                    Text(inspectionList[index].mileage.toString())
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    }
+
+  void listcheck(List<Inspection> inspectionList) {
+    print(inspectionList.length);
+
+    for(var a = 0; a < inspectionList.length;a++){
+      print(inspectionList[a].mileage.toString());
+      print(inspectionList[a].descripshon);
+      print(inspectionList[a].nameInspection);
+      print('------------------------');
+    }
+  }
+
 }
 
