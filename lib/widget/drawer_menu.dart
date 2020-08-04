@@ -1,5 +1,6 @@
 import 'package:carhelper/container.dart';
 import 'package:carhelper/page/add_inspection_page.dart';
+import 'package:carhelper/page/list_inspection.dart';
 import 'package:carhelper/page/settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +43,15 @@ class _DrawerMenuState extends State<DrawerMenu> {
           ),
 
           ListTile(
+            leading: Icon(Icons.add),
+            title: Text('List Inspection'),
+            onTap: () {
+              Route route = MaterialPageRoute(builder: (context) => ListInspection());
+              Navigator.push(context, route);
+            },
+          ),
+
+          ListTile(
             leading: Icon(Icons.settings),
             title: Text('Settings'),
             onTap: () {
@@ -50,13 +60,8 @@ class _DrawerMenuState extends State<DrawerMenu> {
             },
           ),
 
-
         ],
       ),
     );
   }
 }
-
-
-
-

@@ -3,6 +3,7 @@ import 'package:carhelper/model/Inspection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+
 class BodyMain extends StatefulWidget {
   const BodyMain({Key key}) : super(key: key);
 
@@ -14,8 +15,6 @@ class BodyMain extends StatefulWidget {
 class _BodyMainState extends State<BodyMain> {
   Future<List<Inspection>> futureInspectionList;
 
-
-
   @override
   void initState() {
     super.initState();
@@ -23,9 +22,7 @@ class _BodyMainState extends State<BodyMain> {
   }
 
   updateInspectionList() {
-    setState(() {
-      futureInspectionList = DBProvider.db.getInspection();
-    });
+    futureInspectionList = DBProvider.db.getInspection();
   }
 
   @override
@@ -80,7 +77,6 @@ class _BodyMainState extends State<BodyMain> {
   }
 
   Widget list(List<Inspection> inspectionList) {
-    listcheck(inspectionList);
       return  ListView.builder(
         padding: EdgeInsets.all(20),
         itemCount: inspectionList.length,
@@ -95,12 +91,15 @@ class _BodyMainState extends State<BodyMain> {
              ],
             ),
             child: ListTile(
-              onLongPress: () {
-                setState(() {
-                  DBProvider.db.deleteInspection(index);
-                  updateInspectionList();
-                });
-              },
+              leading: IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: () {
+                  DBProvider.db.deleteInspection(inspectionList[index].id);
+                  setState(() {
+                    updateInspectionList();
+                  });
+                }
+              ),
               title: Text(inspectionList[index].nameInspection),
               subtitle: Padding(
                 padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
@@ -108,7 +107,8 @@ class _BodyMainState extends State<BodyMain> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(inspectionList[index].descripshon),
-                    Text(inspectionList[index].mileage.toString())
+                    Text(inspectionList[index].mileage.toString()),
+                    Text(inspectionList[index].date),
                   ],
                 ),
               ),
@@ -117,17 +117,5 @@ class _BodyMainState extends State<BodyMain> {
         },
       );
     }
-
-  void listcheck(List<Inspection> inspectionList) {
-    print(inspectionList.length);
-
-    for(var a = 0; a < inspectionList.length;a++){
-      print(inspectionList[a].mileage.toString());
-      print(inspectionList[a].descripshon);
-      print(inspectionList[a].nameInspection);
-      print('------------------------');
-    }
-  }
-
 }
 

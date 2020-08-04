@@ -16,6 +16,7 @@ class DBProvider {
   String columnId = 'id';
   String columnNameInspection = 'nameInspection';
   String columnDescripshon = 'descripshon';
+  String columnDate = 'date';
   String columnMileage = 'mileage';
 
   Future<Database> get databeses async {
@@ -33,8 +34,7 @@ class DBProvider {
 
   void _createDB(Database db, int version) async {
     await db.execute(
-        'CREATE TABLE $inspectionTable($columnId INTEGER PRIMARY KEY AUTOINCREMENT, $columnNameInspection TEXT, '
-        '$columnDescripshon TEXT, $columnMileage INTEGER)');
+        'CREATE TABLE $inspectionTable($columnId INTEGER PRIMARY KEY AUTOINCREMENT, $columnNameInspection TEXT, $columnDescripshon TEXT, $columnDate TEXT,  $columnMileage INTEGER)');
     print('create');
   }
 

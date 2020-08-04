@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'center_main.dart';
 
 class BodyAddInspection extends StatefulWidget {
   const BodyAddInspection({Key key}) : super(key: key);
@@ -17,12 +16,17 @@ class BodyAddInspection extends StatefulWidget {
 }
 
 class _BodyAddInspectionState extends State<BodyAddInspection> {
-  DateTime selectedDate;
-
-  String dropDownValue;
+  String selectedDate;
+  String dropDownValue = kList[0];
   String nameInspection;
   String descripshon;
   int mileage;
+
+  bool visibilityDropDownValue = false;
+  bool visibilityNameInspection = false;
+  bool visibilityDescripshon = false;
+  bool visibilityMileage = false;
+  bool visibilitySelectedDate = false;
 
   static DateTime now = DateTime.now();
   static int thisYear = (int.parse(DateFormat.y().format(now)) + 1);
@@ -40,43 +44,13 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
     DBProvider.db.databeses;
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Column(
         children: <Widget>[
 
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              children: <Widget>[
-
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                  child: TextField(
-                    obscureText: false,
-                    controller: _controllerNameInspection,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Name Inspection',
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                  child: TextField(
-                    obscureText: false,
-                    controller: _controllerDescripshon,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Descripshon',
-                    ),
-                  ),
-                ),
-
-              ],
-            ),
-          ),
 
           Padding(
             padding: EdgeInsets.all(16.0),
@@ -87,7 +61,7 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
                   value: dropDownValue,
                   onChanged: (String newValue) {
                     setState(() {
-                      dropDownValue = newValue;
+                      checkDropDownValue(newValue);
                     });
                   },
                   items: kList.map((String value) {
@@ -105,25 +79,76 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
             padding: EdgeInsets.all(16.0),
             child: Column(
               children: <Widget>[
+
+                Visibility(
+                  visible: visibilityDropDownValue,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                    child: TextField(
+                      obscureText: false,
+                      controller: _controllerNameInspection,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Name Inspection',
+                      ),
+                    ),
+                  ),
+                ),
+
+                Visibility(
+                  visible: visibilityNameInspection,
+                  child: Text('Name Inspection is Empty!'),
+                ),
+
+                Padding(
+                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                  child: TextField(
+                    obscureText: false,
+                    controller: _controllerDescripshon,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Descripshon',
+                    ),
+                  ),
+                ),
+
+                Visibility(
+                  visible: visibilityDescripshon,
+                  child: Text('Descripshon is Empty!'),
+                ),
+
+              ],
+            ),
+          ),
+
+
+
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
                 TextField(
                   obscureText: false,
                   controller: _controllerMileage,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: 'Km',
+                    labelText: 'Mileage: ',
                   ),
                 ),
-                Text(
-                  'or',
+
+                Visibility(
+                  visible: visibilityMileage,
+                  child: Text('Mileage is Empty!'),
                 ),
+
                 DateField(
                     lastDate: DateTime(thisYear),
                     firstDate: DateTime(firstYear),
                     selectedDate: now,
                     onDateSelected: (DateTime date) {
                       setState(() {
-                        selectedDate = date;
+                        selectedDate = date.toString();
                       });
                     }),
               ],
@@ -133,17 +158,7 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
           Center(
             child: RaisedButton(
               onPressed: () {
-                nameInspection = _controllerNameInspection.text;
-                descripshon = _controllerDescripshon.text;
-                mileage = int.parse(_controllerMileage.text);
-
-                DBProvider.db.insertInspection(Inspection(null, nameInspection, descripshon, mileage));
-                Route route = MaterialPageRoute(builder: (context) => MainPage());
-                Navigator.push(context, route);
-
-                print(descripshon);
-                print(nameInspection);
-                print(mileage);
+                checkField();
               },
               child: Text('add'),
             ),
@@ -153,4 +168,108 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
       ),
     );
   }
+
+
+
+
+  void checkDropDownValue(String newValue) {
+    if(dropDownValue.isEmpty) {
+      print('dropDownValue is Empty!!!!1');
+    } else {
+      dropDownValue = newValue;
+    }
+
+    if(dropDownValue == kList.last) {
+      setState(() {
+        visibilityDropDownValue = true;
+      });
+    } else {
+      setState(() {
+        visibilityDropDownValue = false;
+      });
+    }
+  }
+
+
+  bool checkNameInspectionIsEmpty() {
+    if(_controllerNameInspection.text.isEmpty) {
+      setState(() {
+        visibilityNameInspection = true;
+      });
+      return true;
+    } else {
+      setState(() {
+        visibilityNameInspection = false;
+        nameInspection = _controllerNameInspection.text;
+      });
+      return false;
+    }
+  }
+
+  bool checkDescripshonIsEmpty() {
+    if(_controllerDescripshon.text.isEmpty) {
+      setState(() {
+        visibilityDescripshon = true;
+      });
+      return false;
+    } else {
+      setState(() {
+        visibilityDescripshon = false;
+        descripshon = _controllerDescripshon.text;
+      });
+      return true;
+    }
+  }
+
+  bool checkMileageIsEmpty() {
+    if(_controllerMileage.text.isEmpty) {
+      setState(() {
+        visibilityMileage = true;
+      });
+      return false;
+    } else {
+      setState(() {
+        visibilityMileage = false;
+        mileage = int.parse(_controllerMileage.text);
+      });
+      return true;
+    }
+  }
+
+
+  bool checkValueTitle() {
+    if(visibilityDropDownValue == true) {
+      checkNameInspectionIsEmpty();
+      return true;
+    } else {
+      print('Error on checkValueTitle');
+      return false;
+    }
+  }
+
+  void checkField() {
+    checkValueTitle();
+    checkDescripshonIsEmpty();
+    checkMileageIsEmpty();
+
+    selectedDate = now.toString();
+
+    if(nameInspection == null && dropDownValue.isNotEmpty) {
+      nameInspection = dropDownValue;
+    }
+
+    if(!visibilityNameInspection) {
+      if(!visibilityDescripshon) {
+        if(!visibilityMileage) {
+
+          DBProvider.db.insertInspection(Inspection(null, nameInspection, descripshon, selectedDate, mileage));
+
+          Route route = MaterialPageRoute(builder: (context) => MainPage());
+          Navigator.push(context, route);
+        }
+      }
+    }
+  }
+
+
 }
