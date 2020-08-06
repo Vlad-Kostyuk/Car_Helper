@@ -43,7 +43,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
           ),
 
           ListTile(
-            leading: Icon(Icons.add),
+            leading: Icon(Icons.list),
             title: Text('List Inspection'),
             onTap: () {
               Route route = MaterialPageRoute(builder: (context) => ListInspection());

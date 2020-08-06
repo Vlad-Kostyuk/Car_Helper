@@ -7,5 +7,7 @@ const String kAcountName = 'Vlad';
 const List<String> kList = ['Заміна ременя ГРЕМ', 'Заміна мастила в коробці передач', 'Заміні мастила в двигуні',
   'Заміна акамулятора', 'Свій заголовок'];
 
+int mileageAllTime = 0;
+
 
 

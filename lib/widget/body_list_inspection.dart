@@ -42,9 +42,11 @@ class _BodyListInspectionState extends State<BodyListInspection> {
   }
 
   Widget list(List<Inspection> inspectionList) {
+    List<Inspection> inspectionListReversed = inspectionList;
+    inspectionListReversed = inspectionListReversed.reversed.toList();
     return ListView.builder(
       padding: EdgeInsets.all(20),
-      itemCount: inspectionList.length,
+      itemCount: inspectionListReversed.length,
       itemBuilder: (context, index) {
         return Container(
           margin: EdgeInsets.all(5),
@@ -55,23 +57,23 @@ class _BodyListInspectionState extends State<BodyListInspection> {
             ],
           ),
           child: ListTile(
-            leading: IconButton(
+            trailing: IconButton(
                 icon: Icon(Icons.delete),
                 onPressed: () {
-                  DBProvider.db.deleteInspection(inspectionList[index].id);
-                  setState(() {
-                    updateInspectionList();
-                  });
-                }),
-            title: Text(inspectionList[index].nameInspection),
+                  showDialogDelete(inspectionListReversed, index);
+                }
+            ),
+            title: Text(inspectionListReversed[index].nameInspection),
             subtitle: Padding(
               padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(inspectionList[index].descripshon),
-                  Text(inspectionList[index].mileage.toString()),
-                  Text(inspectionList[index].date),
+                  Text(inspectionListReversed[index].descripshon),
+                  if(inspectionListReversed[index].mileage != 0)
+                    Text('Кілометраж: ${inspectionListReversed[index].mileage.toString()} км'),
+                  if(inspectionListReversed[index].date != '0')
+                   Text(inspectionListReversed[index].date),
                 ],
               ),
             ),
@@ -80,4 +82,53 @@ class _BodyListInspectionState extends State<BodyListInspection> {
       },
     );
   }
+
+
+  Future<void> showDialogDelete(List<Inspection> inspectionList, int index) async {
+    return showDialog (
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete this inspection?'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                    'You really want to delete this inspection?'
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            Row(
+              children: <Widget>[
+                FlatButton(
+                  child: Text(
+                    'Delete',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  onPressed: () {
+                    DBProvider.db.deleteInspection(
+                        inspectionList[index].id);
+                    setState(() {
+                      updateInspectionList();
+                    });
+                    Navigator.of(context).pop();
+                  },
+                ),
+                FlatButton(
+                  child: Text('Canel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            )
+          ],
+        );
+      },
+    );
+  }
+
 }

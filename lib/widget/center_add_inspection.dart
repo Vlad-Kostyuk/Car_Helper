@@ -23,10 +23,10 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
   int mileage;
 
   bool visibilityDropDownValue = false;
-  bool visibilityNameInspection = false;
-  bool visibilityDescripshon = false;
-  bool visibilityMileage = false;
-  bool visibilitySelectedDate = false;
+  bool visibilityNameInspectionTextError = false;
+  bool visibilityDescripshonTextError = false;
+  bool visibilityMileageTextError = false;
+
 
   static DateTime now = DateTime.now();
   static int thisYear = (int.parse(DateFormat.y().format(now)) + 1);
@@ -50,7 +50,6 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
     return Container(
       child: Column(
         children: <Widget>[
-
 
           Padding(
             padding: EdgeInsets.all(16.0),
@@ -83,7 +82,7 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
                 Visibility(
                   visible: visibilityDropDownValue,
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
                     child: TextField(
                       obscureText: false,
                       controller: _controllerNameInspection,
@@ -96,12 +95,18 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
                 ),
 
                 Visibility(
-                  visible: visibilityNameInspection,
-                  child: Text('Name Inspection is Empty!'),
+                  visible: visibilityNameInspectionTextError,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                    child: Text(
+                      'Name Inspection is Empty!',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  )
                 ),
 
                 Padding(
-                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                  padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
                   child: TextField(
                     obscureText: false,
                     controller: _controllerDescripshon,
@@ -113,8 +118,14 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
                 ),
 
                 Visibility(
-                  visible: visibilityDescripshon,
-                  child: Text('Descripshon is Empty!'),
+                    visible: visibilityDescripshonTextError,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                      child: Text(
+                        'Descripshon is Empty!',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    )
                 ),
 
               ],
@@ -124,9 +135,10 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
 
 
           Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: EdgeInsets.fromLTRB(16, 0, 16, 5),
             child: Column(
               children: <Widget>[
+
                 TextField(
                   obscureText: false,
                   controller: _controllerMileage,
@@ -138,9 +150,21 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
                 ),
 
                 Visibility(
-                  visible: visibilityMileage,
-                  child: Text('Mileage is Empty!'),
+                    visible: visibilityMileageTextError,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                      child: Text(
+                        'Mileage > 1 000 000 km!',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    )
                 ),
+
+                Padding(
+                  padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  child: Text('Or'),
+                ),
+
 
                 DateField(
                     lastDate: DateTime(thisYear),
@@ -194,12 +218,12 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
   bool checkNameInspectionIsEmpty() {
     if(_controllerNameInspection.text.isEmpty) {
       setState(() {
-        visibilityNameInspection = true;
+        visibilityNameInspectionTextError = true;
       });
       return true;
     } else {
       setState(() {
-        visibilityNameInspection = false;
+        visibilityNameInspectionTextError = false;
         nameInspection = _controllerNameInspection.text;
       });
       return false;
@@ -209,30 +233,35 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
   bool checkDescripshonIsEmpty() {
     if(_controllerDescripshon.text.isEmpty) {
       setState(() {
-        visibilityDescripshon = true;
+        visibilityDescripshonTextError = true;
       });
       return false;
     } else {
       setState(() {
-        visibilityDescripshon = false;
+        visibilityDescripshonTextError = false;
         descripshon = _controllerDescripshon.text;
       });
       return true;
     }
   }
 
-  bool checkMileageIsEmpty() {
+  void checkMileageIsEmpty() {
     if(_controllerMileage.text.isEmpty) {
       setState(() {
-        visibilityMileage = true;
+        mileage = 0;
+        selectedDate = now.toString();
+        visibilityMileageTextError = false;
       });
-      return false;
     } else {
       setState(() {
-        visibilityMileage = false;
-        mileage = int.parse(_controllerMileage.text);
+        if(int.parse(_controllerMileage.text) >= 2000000) {
+          visibilityMileageTextError = true;
+        } else {
+          mileage = int.parse(_controllerMileage.text);
+          selectedDate = 0.toString();
+          visibilityMileageTextError = false;
+        }
       });
-      return true;
     }
   }
 
@@ -241,9 +270,6 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
     if(visibilityDropDownValue == true) {
       checkNameInspectionIsEmpty();
       return true;
-    } else {
-      print('Error on checkValueTitle');
-      return false;
     }
   }
 
@@ -252,24 +278,26 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
     checkDescripshonIsEmpty();
     checkMileageIsEmpty();
 
-    selectedDate = now.toString();
+
 
     if(nameInspection == null && dropDownValue.isNotEmpty) {
       nameInspection = dropDownValue;
     }
-
-    if(!visibilityNameInspection) {
-      if(!visibilityDescripshon) {
-        if(!visibilityMileage) {
+    if(!visibilityNameInspectionTextError) {
+      if(!visibilityDescripshonTextError) {
 
           DBProvider.db.insertInspection(Inspection(null, nameInspection, descripshon, selectedDate, mileage));
 
           Route route = MaterialPageRoute(builder: (context) => MainPage());
           Navigator.push(context, route);
-        }
       }
     }
   }
 
+  void allTime(int milage) {
+    if(milage == null) {
+        mileageAllTime = mileageAllTime + milage;
+    }
+  }
 
 }
