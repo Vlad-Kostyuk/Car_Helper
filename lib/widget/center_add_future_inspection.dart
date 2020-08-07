@@ -8,17 +8,17 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 
-class BodyAddInspection extends StatefulWidget {
-  const BodyAddInspection({Key key}) : super(key: key);
+class BodyAddFutureInspection extends StatefulWidget {
+  const BodyAddFutureInspection({Key key}) : super(key: key);
 
   @override
-  _BodyAddInspectionState createState() => _BodyAddInspectionState();
+  _BodyAddFutureInspectionState createState() => _BodyAddFutureInspectionState();
 }
 
-class _BodyAddInspectionState extends State<BodyAddInspection> {
-  String selectedDate;
+class _BodyAddFutureInspectionState extends State<BodyAddFutureInspection> {
+  String selectedFutureDate;
   String dropDownValue = kList[0];
-  String nameInspection;
+  String nameInspectionFuture;
   String descripshon;
   int mileage;
 
@@ -31,8 +31,7 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
   static DateTime nowDate = DateTime.now();
   static DateTime selectedDateForm = nowDate;
 
-
-  Future<List<Inspection>> inspectionList;
+  Future<List<Inspection>> inspectionFutureList;
 
   TextEditingController _controllerNameInspection = TextEditingController();
   TextEditingController _controllerDescripshon = TextEditingController();
@@ -95,14 +94,14 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
                 ),
 
                 Visibility(
-                  visible: visibilityNameInspectionTextError,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
-                    child: Text(
-                      'Name Inspection is Empty!',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  )
+                    visible: visibilityNameInspectionTextError,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                      child: Text(
+                        'Name Inspection is Empty!',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    )
                 ),
 
                 Padding(
@@ -167,12 +166,12 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
 
 
                 DateField(
-                    lastDate: nowDate,
+                    firstDate: nowDate,
                     selectedDate: selectedDateForm,
                     onDateSelected: (DateTime date) {
                       setState(() {
                         selectedDateForm = date;
-                        selectedDate = date.toString();
+                        selectedFutureDate = date.toString();
                       });
                     }),
               ],
@@ -224,7 +223,7 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
     } else {
       setState(() {
         visibilityNameInspectionTextError = false;
-        nameInspection = _controllerNameInspection.text;
+        nameInspectionFuture = _controllerNameInspection.text;
       });
       return false;
     }
@@ -249,7 +248,7 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
     if(_controllerMileage.text.isEmpty) {
       setState(() {
         mileage = 0;
-        selectedDate = nowDate.toString();
+        selectedFutureDate = nowDate.toString();
         visibilityMileageTextError = false;
       });
     } else {
@@ -258,7 +257,7 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
           visibilityMileageTextError = true;
         } else {
           mileage = int.parse(_controllerMileage.text);
-          selectedDate = 0.toString();
+          selectedFutureDate = 0.toString();
           visibilityMileageTextError = false;
         }
       });
@@ -280,23 +279,23 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
 
 
 
-    if(nameInspection == null && dropDownValue.isNotEmpty) {
-      nameInspection = dropDownValue;
+    if(nameInspectionFuture == null && dropDownValue.isNotEmpty) {
+      nameInspectionFuture = dropDownValue;
     }
     if(!visibilityNameInspectionTextError) {
       if(!visibilityDescripshonTextError) {
 
-          DBProvider.db.insertInspection(Inspection(null, nameInspection, descripshon, selectedDate, mileage));
+        DBProvider.db.insertFutureInspection(Inspection(null, nameInspectionFuture, descripshon, selectedFutureDate, mileage));
 
-          Route route = MaterialPageRoute(builder: (context) => MainPage());
-          Navigator.push(context, route);
+        Route route = MaterialPageRoute(builder: (context) => MainPage());
+        Navigator.push(context, route);
       }
     }
   }
 
   void allTime(int milage) {
     if(milage == null) {
-        mileageAllTime = mileageAllTime + milage;
+      mileageAllTime = mileageAllTime + milage;
     }
   }
 

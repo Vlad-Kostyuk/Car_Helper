@@ -13,6 +13,7 @@ class DBProvider {
   static Database _database;
 
   String inspectionTable = 'Inspection';
+  String futureInspectionTable = 'futureInspection';
   String columnId = 'id';
   String columnNameInspection = 'nameInspection';
   String columnDescripshon = 'descripshon';
@@ -34,7 +35,13 @@ class DBProvider {
 
   void _createDB(Database db, int version) async {
     await db.execute(
-        'CREATE TABLE $inspectionTable($columnId INTEGER PRIMARY KEY AUTOINCREMENT, $columnNameInspection TEXT, $columnDescripshon TEXT, $columnDate TEXT,  $columnMileage INTEGER)');
+        'CREATE TABLE $inspectionTable($columnId INTEGER PRIMARY KEY AUTOINCREMENT, $columnNameInspection TEXT, '
+            '$columnDescripshon TEXT, $columnDate TEXT,  $columnMileage INTEGER)');
+
+    await db.execute(
+        'CREATE TABLE $futureInspectionTable($columnId INTEGER PRIMARY KEY AUTOINCREMENT, $columnNameInspection TEXT,'
+            ' $columnDescripshon TEXT, $columnDate TEXT,  $columnMileage INTEGER)');
+
     print('create');
   }
 
@@ -46,7 +53,17 @@ class DBProvider {
     inspectionMapList.forEach((inspectionMap) {
       inspectionList.add(Inspection.fromMap(inspectionMap));
     });
+    return inspectionList;
+  }
 
+  ///READ FUTURE
+  Future<List<Inspection>> getFutureInspection() async {
+    Database db = await this.databeses;
+    final List<Map<dynamic, dynamic>> inspectionMapList = await db.query(futureInspectionTable);
+    final List<Inspection> inspectionList = [];
+    inspectionMapList.forEach((inspectionMap) {
+      inspectionList.add(Inspection.fromMap(inspectionMap));
+    });
     return inspectionList;
   }
 
@@ -58,10 +75,25 @@ class DBProvider {
     return inspection;
   }
 
+  /// INSERT FUTURE
+  Future<Inspection> insertFutureInspection(Inspection inspection) async {
+    Database db = await this.databeses;
+    inspection.id = await db.insert(futureInspectionTable, inspection.toMap(), nullColumnHack: columnId);
+    print('add');
+    return inspection;
+  }
+
   /// UPDATE
   Future<int> updateInspection(Inspection inspection) async {
     Database db = await this.databeses;
     return await db.update(inspectionTable, inspection.toMap(),
+        where: '$columnId = ?', whereArgs: [inspection.id]);
+  }
+
+  /// UPDATE FUTURE
+  Future<int> updateFutureInspection(Inspection inspection) async {
+    Database db = await this.databeses;
+    return await db.update(futureInspectionTable, inspection.toMap(),
         where: '$columnId = ?', whereArgs: [inspection.id]);
   }
 
@@ -70,6 +102,16 @@ class DBProvider {
     Database db = await this.databeses;
     return await db.delete(
       inspectionTable,
+      where: '$columnId = ?',
+      whereArgs: [id],
+    );
+  }
+
+  /// DELETE FUTURE
+  Future<int> deleteFutureInspection(int id) async {
+    Database db = await this.databeses;
+    return await db.delete(
+      futureInspectionTable,
       where: '$columnId = ?',
       whereArgs: [id],
     );
