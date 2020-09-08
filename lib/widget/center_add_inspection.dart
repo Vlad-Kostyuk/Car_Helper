@@ -1,11 +1,11 @@
 import 'package:carhelper/container.dart';
 import 'package:carhelper/db/database.dart';
 import 'package:carhelper/model/Inspection.dart';
+import 'package:carhelper/model/User.dart';
 import 'package:carhelper/page/start_page.dart';
 import 'package:date_field/date_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 
 class BodyAddInspection extends StatefulWidget {
@@ -37,6 +37,8 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
   TextEditingController _controllerNameInspection = TextEditingController();
   TextEditingController _controllerDescripshon = TextEditingController();
   TextEditingController _controllerMileage = TextEditingController();
+
+  int mileageAllTime;
 
   @override
   void dispose() {
@@ -274,11 +276,11 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
   }
 
   void checkField() {
+    String color = 'green';
+
     checkValueTitle();
     checkDescripshonIsEmpty();
     checkMileageIsEmpty();
-
-
 
     if(nameInspection == null && dropDownValue.isNotEmpty) {
       nameInspection = dropDownValue;
@@ -286,7 +288,9 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
     if(!visibilityNameInspectionTextError) {
       if(!visibilityDescripshonTextError) {
 
-          DBProvider.db.insertInspection(Inspection(null, nameInspection, descripshon, selectedDate, mileage));
+
+          DBProvider.db.insertInspection(Inspection(null, nameInspection, descripshon, selectedDate, mileage, color));
+          DBProvider.db.insertUser(User(null, 'Vlad', mileage, null));
 
           Route route = MaterialPageRoute(builder: (context) => MainPage());
           Navigator.push(context, route);
@@ -294,10 +298,6 @@ class _BodyAddInspectionState extends State<BodyAddInspection> {
     }
   }
 
-  void allTime(int milage) {
-    if(milage == null) {
-        mileageAllTime = mileageAllTime + milage;
-    }
-  }
+
 
 }

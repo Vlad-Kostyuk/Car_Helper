@@ -5,8 +5,6 @@ import 'package:carhelper/page/start_page.dart';
 import 'package:date_field/date_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-
 
 class BodyAddFutureInspection extends StatefulWidget {
   const BodyAddFutureInspection({Key key}) : super(key: key);
@@ -273,11 +271,11 @@ class _BodyAddFutureInspectionState extends State<BodyAddFutureInspection> {
   }
 
   void checkField() {
+    String color = 'blue';
+
     checkValueTitle();
     checkDescripshonIsEmpty();
     checkMileageIsEmpty();
-
-
 
     if(nameInspectionFuture == null && dropDownValue.isNotEmpty) {
       nameInspectionFuture = dropDownValue;
@@ -285,7 +283,8 @@ class _BodyAddFutureInspectionState extends State<BodyAddFutureInspection> {
     if(!visibilityNameInspectionTextError) {
       if(!visibilityDescripshonTextError) {
 
-        DBProvider.db.insertFutureInspection(Inspection(null, nameInspectionFuture, descripshon, selectedFutureDate, mileage));
+        DBProvider.db.insertFutureInspection(Inspection(null, nameInspectionFuture, descripshon, selectedFutureDate, mileage,
+            color));
 
         Route route = MaterialPageRoute(builder: (context) => MainPage());
         Navigator.push(context, route);
@@ -293,10 +292,6 @@ class _BodyAddFutureInspectionState extends State<BodyAddFutureInspection> {
     }
   }
 
-  void allTime(int milage) {
-    if(milage == null) {
-      mileageAllTime = mileageAllTime + milage;
-    }
-  }
+
 
 }

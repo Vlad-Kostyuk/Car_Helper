@@ -1,6 +1,5 @@
 import 'package:carhelper/container.dart';
 import 'package:carhelper/widget/body_list_future_inspection.dart';
-import 'package:carhelper/widget/body_list_inspection.dart';
 import 'package:flutter/material.dart';
 
 class ListInspectionFuture extends StatefulWidget {

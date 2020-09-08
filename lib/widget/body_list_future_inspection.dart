@@ -12,6 +12,7 @@ class BodyListInspectionFuture extends StatefulWidget {
 
 class _BodyListInspectionFutureState extends State<BodyListInspectionFuture> {
   Future<List<Inspection>> futureInspectionList;
+  Future<List<Inspection>> inspectionList;
 
   @override
   void initState() {
@@ -21,16 +22,17 @@ class _BodyListInspectionFutureState extends State<BodyListInspectionFuture> {
 
   updateInspectionList() {
     futureInspectionList = DBProvider.db.getFutureInspection();
+    inspectionList = DBProvider.db.getInspection();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: FutureBuilder(
-        future: futureInspectionList,
+        future: Future.wait([futureInspectionList, inspectionList]),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return list(snapshot.data);
+            return list(snapshot.data[0], snapshot.data[1]);
           }
           if (snapshot.data == null || snapshot.data.length == 0) {
             return Text('No Data Found');
@@ -41,8 +43,9 @@ class _BodyListInspectionFutureState extends State<BodyListInspectionFuture> {
     );
   }
 
-  Widget list(List<Inspection> inspectionList) {
-    List<Inspection> inspectionListReversed = inspectionList;
+  Widget list(List<Inspection> futureInspectionList, List<Inspection> inspectionList) {
+    List<Inspection> inspectionListReversed;
+    inspectionListReversed = futureInspectionList + inspectionList;
     inspectionListReversed = inspectionListReversed.reversed.toList();
     return ListView.builder(
       padding: EdgeInsets.all(20),
@@ -53,14 +56,17 @@ class _BodyListInspectionFutureState extends State<BodyListInspectionFuture> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(20)),
             boxShadow: [
-              BoxShadow(color: Colors.blueGrey.withOpacity(0.5)),
+              if(inspectionListReversed[index].color == 'blue')
+              BoxShadow(color: Colors.blue),
+              if(inspectionListReversed[index].color == 'green')
+                BoxShadow(color: Colors.green),
             ],
           ),
           child: ListTile(
             trailing: IconButton(
                 icon: Icon(Icons.delete),
                 onPressed: () {
-                  showDialogDelete(inspectionListReversed, index);
+                  showDialogDelete(inspectionListReversed, index, inspectionListReversed.length);
                 }
             ),
             title: Text(inspectionListReversed[index].nameInspection),
@@ -71,7 +77,10 @@ class _BodyListInspectionFutureState extends State<BodyListInspectionFuture> {
                 children: <Widget>[
                   Text(inspectionListReversed[index].descripshon),
                   if(inspectionListReversed[index].mileage != 0)
-                    Text('Кілометраж: ${inspectionListReversed[index].mileage.toString()} км'),
+                    if(inspectionListReversed[index].color == 'blue')
+                     Text('Запланований кілометраж: ${inspectionListReversed[index].mileage.toString()} км'),
+                    if(inspectionListReversed[index].color == 'green')
+                     Text('Пройдений кілометраж: ${inspectionListReversed[index].mileage.toString()} км'),
                   if(inspectionListReversed[index].date != '0')
                     Text(inspectionListReversed[index].date),
                 ],
@@ -84,7 +93,7 @@ class _BodyListInspectionFutureState extends State<BodyListInspectionFuture> {
   }
 
 
-  Future<void> showDialogDelete(List<Inspection> inspectionList, int index) async {
+  Future<void> showDialogDelete(List<Inspection> inspectionListReversed, int index, int length) async {
     return showDialog (
       context: context,
       barrierDismissible: false,
@@ -109,11 +118,27 @@ class _BodyListInspectionFutureState extends State<BodyListInspectionFuture> {
                     style: TextStyle(color: Colors.red),
                   ),
                   onPressed: () {
-                    DBProvider.db.deleteFutureInspection(
-                        inspectionList[index].id);
-                    setState(() {
-                      updateInspectionList();
-                    });
+
+                    if(index >= length/2) {
+                      DBProvider.db.deleteFutureInspection(inspectionListReversed[index].id);
+                      setState(() {
+                        updateInspectionList();
+                      });
+                    } else {
+                      DBProvider.db.deleteInspection(inspectionListReversed[index].id);
+                      setState(() {
+                        updateInspectionList();
+                      });
+                    }
+                    if(length == 1) {
+                      ///дуже великий колстиль
+                      DBProvider.db.deleteInspection(inspectionListReversed[index].id);
+                      DBProvider.db.deleteFutureInspection(inspectionListReversed[index].id);
+                      setState(() {
+                        updateInspectionList();
+                      });
+                    }
+
                     Navigator.of(context).pop();
                   },
                 ),

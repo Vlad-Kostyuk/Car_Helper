@@ -1,11 +1,13 @@
+
 class Inspection {
   int id;
   String nameInspection;
   String descripshon;
   String date;
   int mileage;
+  String color;
 
-  Inspection(this.id, this.nameInspection, this.descripshon, this.date, this.mileage);
+  Inspection(this.id, this.nameInspection, this.descripshon, this.date, this.mileage, this.color);
 
   Map<String, dynamic> toMap() {
      final map = Map<String, dynamic>();
@@ -14,6 +16,7 @@ class Inspection {
      map['descripshon'] = descripshon;
      map['date'] = date;
      map['mileage'] = mileage;
+     map['color'] = color;
      return map;
   }
 
@@ -23,5 +26,6 @@ class Inspection {
     descripshon = map['descripshon'];
     date = map['date'];
     mileage = map['mileage'];
+    color = map['color'];
   }
 }

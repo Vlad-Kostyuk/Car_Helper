@@ -1,6 +1,7 @@
 import 'package:carhelper/container.dart';
 import 'package:carhelper/db/database.dart';
 import 'package:carhelper/model/Inspection.dart';
+import 'package:carhelper/model/User.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,13 @@ class BodyMain extends StatefulWidget {
 
 
 class _BodyMainState extends State<BodyMain> {
+  Future<List<Inspection>> oldInspectionList;
+  Future<List<User>> futureUser;
   Future<List<Inspection>> futureInspectionList;
+
+  int mileageAllTime;
+
+
 
   @override
   void initState() {
@@ -23,8 +30,12 @@ class _BodyMainState extends State<BodyMain> {
   }
 
   updateInspectionList() {
-    futureInspectionList = DBProvider.db.getInspection();
+    oldInspectionList = DBProvider.db.getInspection();
+    futureInspectionList = DBProvider.db.getFutureInspection();
+    futureUser = DBProvider.db.getUser();
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -43,22 +54,28 @@ class _BodyMainState extends State<BodyMain> {
             ),
           ),
 
+
+
           Expanded(
-            child: Container(
-              child: Column(
-                children: <Widget>[
-                  Text('Пройдений кілометраж за місяць: 133 400\n'),
-                  Text('Пройдений кілометраж за весь час: $mileageAllTime\n'),
-                  Text('Остаіній тех огляд: 13.04.2020 \n'),
-                  Text('Наступний тех огляд: 13.04.2020 \n'),
-                ],
-              ),
+            child: FutureBuilder(
+              future: Future.wait([futureUser, oldInspectionList, futureInspectionList]),
+              builder: (context, snapshot) {
+                if(snapshot.hasData) {
+                  if(snapshot.data[0].length != 0 && snapshot.data[1].length != 0 && snapshot.data[2].length != 0) {
+                    return listInfo(snapshot.data[0], snapshot.data[1], snapshot.data[2]);
+                  }
+                }
+                if(snapshot.data == null || snapshot.data.length == 0) {
+                  return Text('List Inspection is Empty :(');
+                }
+                return CircularProgressIndicator();
+              },
             ),
           ),
 
           Expanded(
             child: FutureBuilder(
-              future: futureInspectionList,
+              future: oldInspectionList,
               builder: (context, snapshot) {
                 if(snapshot.hasData) {
                   if(snapshot.data.length != 0) {
@@ -80,7 +97,6 @@ class _BodyMainState extends State<BodyMain> {
   }
 
   Widget list(List<Inspection> inspectionList) {
-    allTime(inspectionList);
       return  ListView.builder(
         padding: EdgeInsets.all(20),
         itemCount: 1,
@@ -89,8 +105,9 @@ class _BodyMainState extends State<BodyMain> {
             margin: EdgeInsets.all(5),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(20)),
-              boxShadow:[ BoxShadow(
-                color: Colors.blueGrey.withOpacity(0.5)
+              boxShadow:[
+                BoxShadow(
+                color: Colors.green
               ),
              ],
             ),
@@ -109,7 +126,7 @@ class _BodyMainState extends State<BodyMain> {
                   children: <Widget>[
                     Text(inspectionList[inspectionList.length - 1].descripshon),
                     if(inspectionList[inspectionList.length - 1].mileage != 0)
-                      Text('Кілометраж: ${inspectionList[inspectionList.length - 1].mileage.toString()} км'),
+                      Text('Пройдений кілометраж: ${inspectionList[inspectionList.length - 1].mileage.toString()} км'),
                     if(inspectionList[inspectionList.length - 1].date != '0')
                      Text(inspectionList[inspectionList.length - 1].date),
                   ],
@@ -120,6 +137,45 @@ class _BodyMainState extends State<BodyMain> {
         },
       );
     }
+
+    Widget listInfo(List<User> userList, List<Inspection> oldInspectionList, List<Inspection> futureInspectionList) {
+      getMileageList(userList);
+      String lastInspection;
+      String futureInspection;
+
+      Widget oldInspectionText() {
+        if(oldInspectionList.last.mileage != 0) {
+            lastInspection = oldInspectionList.last.mileage.toString();
+            return Text('Останій тех огляд через: $lastInspection \n');
+        } else if(oldInspectionList.last.date.isNotEmpty) {
+            lastInspection = oldInspectionList.last.date;
+            return Text('Останій тех огляд: $lastInspection \n');
+        }
+      }
+
+      Widget futureInspectionText() {
+        if(futureInspectionList.last.mileage != 0) {
+           futureInspection = futureInspectionList.last.mileage.toString();
+           return Text('Наступний тех огляд через: $futureInspection \n');
+        } else if(futureInspectionList.last.date.isNotEmpty) {
+           futureInspection = futureInspectionList.last.date;
+           return Text('Наступний тех огляд: $futureInspection \n');
+        }
+      }
+
+      return Container(
+        child: Column(
+          children: <Widget>[
+            Text('Пройдений кілометраж за місяць: 133 400\n'),
+            Text('Пройдений кілометраж за весь час: $mileageAllTime\n'),
+            oldInspectionText(),
+            futureInspectionText()
+          ],
+        ),
+      );
+    }
+
+
 
   Future<void> showDialogDelete(List<Inspection> inspectionList, int index) async {
     return showDialog (
@@ -150,7 +206,6 @@ class _BodyMainState extends State<BodyMain> {
                         inspectionList[index].id);
                     setState(() {
                       updateInspectionList();
-                      allTime(inspectionList);
                     });
                     Navigator.of(context).pop();
                   },
@@ -170,13 +225,13 @@ class _BodyMainState extends State<BodyMain> {
   }
 
 
-  void allTime(List<Inspection> inspectionList) {
-    if(inspectionList.isNotEmpty) {
-      for (int tmp = 0; tmp < inspectionList.length; tmp++) {
-          mileageAllTime = 0;
-          mileageAllTime = mileageAllTime + inspectionList[tmp].mileage;
+  void getMileageList(List<User> user) {
+      mileageAllTime = 0;
+      if(user.isNotEmpty) {
+        for (int tmp = 0; tmp < user.length; tmp++) {
+            mileageAllTime = mileageAllTime +  user[tmp].mileage;
+        }
       }
-    }
   }
 
 }
