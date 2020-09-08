@@ -1,21 +1,21 @@
 import 'package:carhelper/container.dart';
-import 'package:carhelper/widget/center_add_inspection.dart';
+import 'package:carhelper/widget/center_add_future_inspection.dart';
 import 'package:flutter/material.dart';
 
-class AddInspection extends StatefulWidget {
-  const AddInspection({Key key}) : super(key: key);
+class AddFutureInspection extends StatefulWidget {
+  const AddFutureInspection({Key key}) : super(key: key);
 
   @override
-  _AddInspectionState createState() => _AddInspectionState();
+  _AddFutureInspectionState createState() => _AddFutureInspectionState();
 }
 
-class _AddInspectionState extends State<AddInspection> {
+class _AddFutureInspectionState extends State<AddFutureInspection> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          kTitleAppBarAddInspectionOld,
+          kTitleAppBarAddInspectionFuture,
           style: TextStyle(color: Colors.black),
         ),
         iconTheme: IconThemeData(color: Colors.black),
@@ -24,7 +24,7 @@ class _AddInspectionState extends State<AddInspection> {
       ),
       body: ListView(
         children: <Widget>[
-          BodyAddInspection(),
+          BodyAddFutureInspection(),
         ],
       ),
     );
