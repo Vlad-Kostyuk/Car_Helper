@@ -1,5 +1,5 @@
-import 'package:carhelper/db/database.dart';
-import 'package:carhelper/model/Inspection.dart';
+import 'package:carhelper/data/db/database.dart';
+import 'package:carhelper/data/model/Inspection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

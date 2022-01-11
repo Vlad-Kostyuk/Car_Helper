@@ -1,7 +1,7 @@
-import 'package:carhelper/container.dart';
-import 'package:carhelper/db/database.dart';
-import 'package:carhelper/model/Inspection.dart';
-import 'package:carhelper/model/User.dart';
+import 'package:carhelper/string/container.dart';
+import 'package:carhelper/data/db/database.dart';
+import 'package:carhelper/data/model/Inspection.dart';
+import 'package:carhelper/data/model/User.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

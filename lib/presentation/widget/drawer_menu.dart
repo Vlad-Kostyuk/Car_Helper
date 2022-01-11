@@ -1,8 +1,8 @@
-import 'package:carhelper/container.dart';
-import 'package:carhelper/page/add_future_inspection.dart';
-import 'package:carhelper/page/add_inspection_page.dart';
-import 'package:carhelper/page/future_list_inspection.dart';
-import 'package:carhelper/page/settings.dart';
+import 'package:carhelper/string/container.dart';
+import 'package:carhelper/presentation//page/add_future_inspection.dart';
+import 'package:carhelper/presentation/page/add_inspection_page.dart';
+import 'package:carhelper/presentation/page/future_list_inspection.dart';
+import 'package:carhelper/presentation/page/settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

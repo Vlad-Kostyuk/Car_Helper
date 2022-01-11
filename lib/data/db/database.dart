@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'package:carhelper/model/Inspection.dart';
-import 'package:carhelper/model/User.dart';
+import 'package:carhelper/data/model/Inspection.dart';
+import 'package:carhelper/data/model/User.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite/sqlite_api.dart';
+import 'db_service/db_service.dart';
 
-class DBProvider {
+class DBProvider implements SQLDataService{
   DBProvider._();
 
   static final DBProvider db = DBProvider._();
@@ -58,6 +58,7 @@ class DBProvider {
   }
 
   ///READ OLD
+  @override
     Future<List<Inspection>> getInspection() async {
     Database db = await this.databeses;
     final List<Map<dynamic, dynamic>> inspectionMapList = await db.query(inspectionTable);
@@ -69,6 +70,7 @@ class DBProvider {
   }
 
   ///READ FUTURE
+  @override
   Future<List<Inspection>> getFutureInspection() async {
     Database db = await this.databeses;
     final List<Map<dynamic, dynamic>> inspectionMapList = await db.query(futureInspectionTable);
@@ -80,6 +82,7 @@ class DBProvider {
   }
 
   ///READ User
+  @override
   Future<List<User>> getUser() async {
     Database db = await this.databeses;
     final List<Map<dynamic, dynamic>> userMapList = await db.query(userTable);
@@ -91,6 +94,7 @@ class DBProvider {
   }
 
   /// INSERT
+  @override
   Future<Inspection> insertInspection(Inspection inspection) async {
     Database db = await this.databeses;
     inspection.id = await db.insert(inspectionTable, inspection.toMap(), nullColumnHack: columnId);
@@ -99,6 +103,7 @@ class DBProvider {
   }
 
   /// INSERT FUTURE
+  @override
   Future<Inspection> insertFutureInspection(Inspection inspection) async {
     Database db = await this.databeses;
     inspection.id = await db.insert(futureInspectionTable, inspection.toMap(), nullColumnHack: columnId);
@@ -107,6 +112,7 @@ class DBProvider {
   }
 
   /// INSERT User
+  @override
   Future<User> insertUser(User user) async {
     Database db = await this.databeses;
     user.id = await db.insert(userTable, user.toMap(), nullColumnHack: columnId);
@@ -115,6 +121,7 @@ class DBProvider {
   }
 
   /// UPDATE
+  @override
   Future<int> updateInspection(Inspection inspection) async {
     Database db = await this.databeses;
     return await db.update(inspectionTable, inspection.toMap(),
@@ -122,6 +129,7 @@ class DBProvider {
   }
 
   /// UPDATE FUTURE
+  @override
   Future<int> updateFutureInspection(Inspection inspection) async {
     Database db = await this.databeses;
     return await db.update(futureInspectionTable, inspection.toMap(),
@@ -129,6 +137,7 @@ class DBProvider {
   }
 
   /// UPDATE User
+  @override
   Future<int> updateUser(User user) async {
     Database db = await this.databeses;
     return await db.update(userTable, user.toMap(),
@@ -136,6 +145,7 @@ class DBProvider {
   }
 
   /// DELETE
+  @override
   Future<int> deleteInspection(int id) async {
     Database db = await this.databeses;
     return await db.delete(
@@ -146,6 +156,7 @@ class DBProvider {
   }
 
   /// DELETE FUTURE
+  @override
   Future<int> deleteFutureInspection(int id) async {
     Database db = await this.databeses;
     return await db.delete(
@@ -156,6 +167,7 @@ class DBProvider {
   }
 
   /// DELETE User
+  @override
   Future<int> deleteUser(int id) async {
     Database db = await this.databeses;
     return await db.delete(

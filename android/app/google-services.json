@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "777292428457",
+    "project_id": "car-helper-7c29d",
+    "storage_bucket": "car-helper-7c29d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:777292428457:android:94a15d1d717a39192e25b8",
+        "android_client_info": {
+          "package_name": "com.example.carhelper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "777292428457-dlps05ti53gctpbvt1fea1ei1rc09hcd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.carhelper",
+            "certificate_hash": "5e331300809ccd21ec29381737eb46d513efc6d2"
+          }
+        },
+        {
+          "client_id": "777292428457-uubaaln11ge06i787mhhrk9ca2iddf5a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5PR2r1A1eHMkkRbjRmfEs_iwIaJmOF-k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "777292428457-uubaaln11ge06i787mhhrk9ca2iddf5a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
